@@ -48,6 +48,15 @@ defmodule Ueberauth.Strategy.Line do
     end
   end
 
+  @doc """
+  Handles the callback from app with access_token.
+  """
+  def handle_callback!(%Plug.Conn{params: %{"access_token" => access_token}} = conn) do
+    client = Ueberauth.Strategy.Line.OAuth.client
+    token = OAuth2.AccessToken.new(access_token)
+    fetch_user(conn, %{client | token: token})
+  end
+
   @doc false
   def handle_callback!(conn) do
     set_errors!(conn, [error("missing_code", "No code received")])
@@ -121,6 +130,7 @@ defmodule Ueberauth.Strategy.Line do
 
   defp fetch_user(conn, client) do
     conn = put_private(conn, :line_token, client.token)
+    IO.inspect(client.token)
     url = "https://api.line.me/v2/profile"
     response = OAuth2.Client.get(client, url)
     case response do
