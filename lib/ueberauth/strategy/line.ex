@@ -101,11 +101,9 @@ defmodule Ueberauth.Strategy.Line do
   """
   def info(conn) do
     user = conn.private.line_user
-
     %Info{
       email: user["mid"] ,
-      first_name: user["displayName"],
-      image: fetch_image(user["pictureUrl"]),
+      image: user["pictureUrl"],
       name: user["displayName"],
     }
   end
@@ -121,11 +119,6 @@ defmodule Ueberauth.Strategy.Line do
         user: conn.private.line_user
       }
     }
-  end
-
-  # TODO: Implement this
-  defp fetch_image(image_url) do
-    image_url
   end
 
   defp fetch_user(conn, client) do
